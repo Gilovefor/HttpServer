@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{b1ba1ffe-4f03-4664-9c1c-fe25540f88e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="head">
+      <UniqueIdentifier>{41affc36-a135-4a8a-a324-9776930abbc5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="server.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c" />
+    <ClCompile Include="epollrun.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="client.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="recvHttpRequest.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="send.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="filetype.c">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="server.h">
+      <Filter>head</Filter>
+    </ClInclude>
+    <ClInclude Include="client.h">
+      <Filter>head</Filter>
+    </ClInclude>
+    <ClInclude Include="recvHttpRequest.h">
+      <Filter>head</Filter>
+    </ClInclude>
+    <ClInclude Include="send.h">
+      <Filter>head</Filter>
+    </ClInclude>
+    <ClInclude Include="filetype.h">
+      <Filter>head</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
