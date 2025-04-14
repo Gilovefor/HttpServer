@@ -21,19 +21,21 @@ int parseRequestLine(const char* line, int cfd)
 	//清除path末尾可能存在的 \r 或者 \n 
 	char* p = strchr(path, '\r');
 	if (p) 
-		*p = '0';
+		*p = '\0';
 	p = strchr(path, '\n');
 	if (p)
-		*p = '0';
+		*p = '\0';
 
-	printf("method: %s, path: %s\n", method, path);
+	printf("Original path: %s\n", path);
+
+	// 在这里添加解码逻辑
+	char decoded_path[1024];
+	decodeMsg(decoded_path, path);  // 解码 URL 编码的路径
+	printf("Decoded path: %s\n", decoded_path);
 
 	if (strcasecmp(method, "get") != 0) {
 		return -1;	
 	}
-
-	char decoded_path[1024];
-	decodeMsg(decoded_path, path);
 
 	//处理客户端请求的静态资源（目录/文件）
 	const char* file = NULL;
