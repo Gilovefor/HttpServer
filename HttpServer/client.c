@@ -2,17 +2,20 @@
 #include <stdio.h>
 #include <sys/epoll.h>
 #include <fcntl.h>;
+#include <sys/socket.h>
+#include <unistd.h>
+
 
 int acceptClient(int lfd, int efpd)
 {
-	//1¡¢½¨Á¢Á¬½Ó
+	//1ã€å»ºç«‹è¿æ¥
 	int cfd = accept(lfd, NULL, NULL);
 	if (cfd == -1) {
 		perror("accept");
 		return -1;
 	}
 
-	//2¡¢ÉèÖÃ·Ç×èÈû
+	//2ã€è®¾ç½®éé˜»å¡
 	int flag = fcntl(lfd, F_GETFL);
 	if (flag == -1) {
 		perror("fcntl");
@@ -26,11 +29,11 @@ int acceptClient(int lfd, int efpd)
 		return -1;
 	}
 
-	//3¡¢°ÑcfdÌí¼Óµ½epollÊ÷ÉÏ
+	//3ã€æŠŠcfdæ·»åŠ åˆ°epollæ ‘ä¸Š
 	struct epoll_event ev;
 	ev.data.fd = cfd;
-	ev.events = EPOLLIN | EPOLLET;		//ÉèÖÃÎª±ßÑØÄ£Ê½£¨Ä¬ÈÏË®Æ½Ä£Ê½£©	
-										//epollĞ§ÂÊ×î¸ßÄ£Ê½£º±ßÑØ·Ç×èÈûÄ£Ê½
+	ev.events = EPOLLIN | EPOLLET;		//è®¾ç½®ä¸ºè¾¹æ²¿æ¨¡å¼ï¼ˆé»˜è®¤æ°´å¹³æ¨¡å¼ï¼‰	
+										//epollæ•ˆç‡æœ€é«˜æ¨¡å¼ï¼šè¾¹æ²¿éé˜»å¡æ¨¡å¼
 	int ret = epoll_ctl(efpd, EPOLL_CTL_ADD, cfd, &ev);
 	if (ret == -1) {
 		perror("epoll_ctl");

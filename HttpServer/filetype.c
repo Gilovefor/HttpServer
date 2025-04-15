@@ -1,13 +1,14 @@
 #include "filetype.h"
 #include <string.h>
+#include <ctype.h>
 
 const char* getFileType(const char* name)
 {
     // a.jpg a.mp4 a.html
-    // ×ÔÓÒÏò×ó²éÕÒ¡®.¡¯×Ö·û, Èç²»´æÔÚ·µ»ØNULL
+    // è‡ªå³å‘å·¦æŸ¥æ‰¾â€˜.â€™å­—ç¬¦, å¦‚ä¸å­˜åœ¨è¿”å›žNULL
     const char* dot = strrchr(name, '.');
     if (dot == NULL)
-        return "text/plain; charset=utf-8";	// Ä¬ÈÏ´¿ÎÄ±¾
+        return "text/plain; charset=utf-8";	// é»˜è®¤çº¯æ–‡æœ¬
 
 
     if (strcmp(dot, ".html") == 0 || strcmp(dot, ".htm") == 0)
@@ -51,10 +52,10 @@ const char* getFileType(const char* name)
     if (strcmp(dot, ".pac") == 0)
         return "application/x-ns-proxy-autoconfig";
 
-    return "text/plain; charset=utf-8";  // fallback Ä¬ÈÏ
+    return "text/plain; charset=utf-8";  // fallback é»˜è®¤
 }
 
-// ½«×Ö·û×ª»»ÎªÕûÐÎÊý
+// å°†å­—ç¬¦è½¬æ¢ä¸ºæ•´å½¢æ•°
 int hexToDec(char c)
 {
     if (c >= '0' && c <= '9')
@@ -67,27 +68,27 @@ int hexToDec(char c)
     return 0;
 }
 
-// ½âÂë
-// to ´æ´¢½âÂëÖ®ºóµÄÊý¾Ý, ´«³ö²ÎÊý, from±»½âÂëµÄÊý¾Ý, ´«Èë²ÎÊý
+// è§£ç 
+// to å­˜å‚¨è§£ç ä¹‹åŽçš„æ•°æ®, ä¼ å‡ºå‚æ•°, fromè¢«è§£ç çš„æ•°æ®, ä¼ å…¥å‚æ•°
 void decodeMsg(char* to, char* from)
 {
     for (; *from != '\0'; ++to, ++from)
     {
-        // isxdigit -> ÅÐ¶Ï×Ö·ûÊÇ²»ÊÇ16½øÖÆ¸ñÊ½, È¡ÖµÔÚ 0-f
+        // isxdigit -> åˆ¤æ–­å­—ç¬¦æ˜¯ä¸æ˜¯16è¿›åˆ¶æ ¼å¼, å–å€¼åœ¨ 0-f
         // Linux%E5%86%85%E6%A0%B8.jpg
         if (from[0] == '%' && isxdigit(from[1]) && isxdigit(from[2]))
         {
-            // ½«16½øÖÆµÄÊý -> Ê®½øÖÆ ½«Õâ¸öÊýÖµ¸³Öµ¸øÁË×Ö·û int -> char
+            // å°†16è¿›åˆ¶çš„æ•° -> åè¿›åˆ¶ å°†è¿™ä¸ªæ•°å€¼èµ‹å€¼ç»™äº†å­—ç¬¦ int -> char
             // B2 == 178
-            // ½«3¸ö×Ö·û, ±ä³ÉÁËÒ»¸ö×Ö·û, Õâ¸ö×Ö·û¾ÍÊÇÔ­Ê¼Êý¾Ý
+            // å°†3ä¸ªå­—ç¬¦, å˜æˆäº†ä¸€ä¸ªå­—ç¬¦, è¿™ä¸ªå­—ç¬¦å°±æ˜¯åŽŸå§‹æ•°æ®
             *to = hexToDec(from[1]) * 16 + hexToDec(from[2]);
 
-            // Ìø¹ý from[1] ºÍ from[2] Òò´ËÔÚµ±Ç°Ñ­»·ÖÐÒÑ¾­´¦Àí¹ýÁË
+            // è·³è¿‡ from[1] å’Œ from[2] å› æ­¤åœ¨å½“å‰å¾ªçŽ¯ä¸­å·²ç»å¤„ç†è¿‡äº†
             from += 2;
         }
         else
         {
-            // ×Ö·û¿½±´, ¸³Öµ
+            // å­—ç¬¦æ‹·è´, èµ‹å€¼
             *to = *from;
         }
 
