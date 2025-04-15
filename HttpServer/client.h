@@ -1,4 +1,4 @@
 #pragma once
 
-//和客户端建立连接
+//鍜屽鎴风寤虹珛杩炴帴
 int acceptClient(int lfd, int efpd);

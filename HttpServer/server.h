@@ -1,8 +1,8 @@
 #pragma once
 
-//初始化文件描述符
+//鍒濆鍖栨枃浠舵弿杩扮
 int initListenFD(unsigned short port);
 
-//启动epoll
+//鍚姩epoll
 int epollRun(int lfd);
 

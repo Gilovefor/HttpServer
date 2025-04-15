@@ -1,13 +1,13 @@
 #pragma once
 
 /*
- * HTTP GET ÇëÇó¸ñÊ½£º
+ * HTTP GET è¯·æ±‚æ ¼å¼ï¼š
  * --------------------------
- * [ÇëÇóĞĞ] ¸ñÊ½£ºGET /path?query HTTP/1.1\r\n
- * [ÇëÇóÍ·] Ã¿ĞĞ¸ñÊ½£ºHeaderName: Value\r\n
- * Í·½áÊøºó¸úÒ»¸ö¿ÕĞĞ \r\n
+ * [è¯·æ±‚è¡Œ] æ ¼å¼ï¼šGET /path?query HTTP/1.1\r\n
+ * [è¯·æ±‚å¤´] æ¯è¡Œæ ¼å¼ï¼šHeaderName: Value\r\n
+ * å¤´ç»“æŸåè·Ÿä¸€ä¸ªç©ºè¡Œ \r\n
  *
- * Ê¾Àı£º
+ * ç¤ºä¾‹ï¼š
  * GET /search?q=hello HTTP/1.1\r\n
  * Host: example.com\r\n
  * User-Agent: curl/7.68.0\r\n
@@ -15,8 +15,8 @@
  */
 
 
-int parseRequestLine(const char* line, int cfd);	//½âÎöÇëÇóĞĞ
+int parseRequestLine(const char* line, int cfd);	//è§£æè¯·æ±‚è¡Œ
 
-int recvHttpRequest(int cfd, int epfd);				//½ÓÊÕÇëÇóĞĞÏûÏ¢
+int recvHttpRequest(int cfd, int epfd);				//æ¥æ”¶è¯·æ±‚è¡Œæ¶ˆæ¯
 	
 

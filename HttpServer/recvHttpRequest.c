@@ -18,7 +18,7 @@ int parseRequestLine(const char* line, int cfd)
 
 	sscanf(line, "%[^ ] %[^ ]", method, path);
 
-	//Çå³ıpathÄ©Î²¿ÉÄÜ´æÔÚµÄ \r »òÕß \n 
+	//æ¸…é™¤pathæœ«å°¾å¯èƒ½å­˜åœ¨çš„ \r æˆ–è€… \n 
 	char* p = strchr(path, '\r');
 	if (p) 
 		*p = '\0';
@@ -28,16 +28,16 @@ int parseRequestLine(const char* line, int cfd)
 
 	printf("Original path: %s\n", path);
 
-	// ÔÚÕâÀïÌí¼Ó½âÂëÂß¼­
+	// åœ¨è¿™é‡Œæ·»åŠ è§£ç é€»è¾‘
 	char decoded_path[1024];
-	decodeMsg(decoded_path, path);  // ½âÂë URL ±àÂëµÄÂ·¾¶
+	decodeMsg(decoded_path, path);  // è§£ç  URL ç¼–ç çš„è·¯å¾„
 	printf("Decoded path: %s\n", decoded_path);
 
 	if (strcasecmp(method, "get") != 0) {
 		return -1;	
 	}
 
-	//´¦Àí¿Í»§¶ËÇëÇóµÄ¾²Ì¬×ÊÔ´£¨Ä¿Â¼/ÎÄ¼ş£©
+	//å¤„ç†å®¢æˆ·ç«¯è¯·æ±‚çš„é™æ€èµ„æºï¼ˆç›®å½•/æ–‡ä»¶ï¼‰
 	const char* file = NULL;
 	if (strcmp(decoded_path, "/") == 0) {
 		file = "./";
@@ -48,14 +48,14 @@ int parseRequestLine(const char* line, int cfd)
 
 	printf("Parsed file path: %s\n", file);
 
-	//»ñÈ¡ÎÄ¼şÊôĞÔ
+	//è·å–æ–‡ä»¶å±æ€§
 	struct stat st;
 	int ret = stat(file, &st);
 	if (ret == -1) {
-		// ÎÄ¼ş²»´æÔÚ£¬·µ»Ø 404 Ò³Ãæ
+		// æ–‡ä»¶ä¸å­˜åœ¨ï¼Œè¿”å› 404 é¡µé¢
 		struct stat st404;
 		if (stat("404.html", &st404) == -1) {
-			// Á¬ 404.html ¶¼Ã»ÓĞ£¬Ö±½Ó·¢ËÍ¼òµ¥ÏûÏ¢
+			// è¿ 404.html éƒ½æ²¡æœ‰ï¼Œç›´æ¥å‘é€ç®€å•æ¶ˆæ¯
 			const char* notFoundMsg = "<h1>404 Not Found</h1>";
 			sendHeadMsg(cfd, 404, "NOT FOUND", "text/html", strlen(notFoundMsg));
 			send(cfd, notFoundMsg, strlen(notFoundMsg), 0);
@@ -67,13 +67,13 @@ int parseRequestLine(const char* line, int cfd)
 		return 0;
 	}
 
-	// ÅĞ¶ÏÊÇ·ñÊÇÄ¿Â¼
+	// åˆ¤æ–­æ˜¯å¦æ˜¯ç›®å½•
 	if (S_ISDIR(st.st_mode)) {
-		// ·¢ËÍÄ¿Â¼ÄÚÈİ
+		// å‘é€ç›®å½•å†…å®¹
 		sendDir(file, cfd);  
 	}
 	else {
-		// ÆÕÍ¨ÎÄ¼ş£¬ÏÈ·¢ËÍÍ·²¿£¬ÔÙ·¢ËÍÎÄ¼şÄÚÈİ
+		// æ™®é€šæ–‡ä»¶ï¼Œå…ˆå‘é€å¤´éƒ¨ï¼Œå†å‘é€æ–‡ä»¶å†…å®¹
 		sendHeadMsg(cfd, 200, "OK", getFileType(file), st.st_size);
 		sendFile(file, cfd);
 	}
@@ -97,7 +97,7 @@ int recvHttpRequest(int cfd, int epfd)
 		total += len;
 		buf[total] = '\0';
 
-		// ¼ì²éÊÇ·ñ¶Áµ½ÍêÕûµÄ HTTP ÇëÇóÍ·£¨ÒÔ \r\n\r\n ½áÎ²£©
+		// æ£€æŸ¥æ˜¯å¦è¯»åˆ°å®Œæ•´çš„ HTTP è¯·æ±‚å¤´ï¼ˆä»¥ \r\n\r\n ç»“å°¾ï¼‰
 		if (strstr(buf, "\r\n\r\n")) {
 			break;
 		}
@@ -110,10 +110,10 @@ int recvHttpRequest(int cfd, int epfd)
 		printf("client closed connection.\n");
 	}
 	else {
-		// ´Ó buf ÖĞÌáÈ¡³öµÚÒ»ĞĞ£¬´«¸ø parseRequestLine
+		// ä» buf ä¸­æå–å‡ºç¬¬ä¸€è¡Œï¼Œä¼ ç»™ parseRequestLine
 		char* lineEnd = strstr(buf, "\r\n");
 		if (lineEnd) {
-			*lineEnd = '\0';  // ½Ø¶ÏµÚÒ»ĞĞ
+			*lineEnd = '\0';  // æˆªæ–­ç¬¬ä¸€è¡Œ
 			parseRequestLine(buf, cfd);
 		}
 		else {

@@ -1,7 +1,7 @@
 #pragma once
 
-const char* getFileType(const char* name);	//»ñÈ¡content_type
+const char* getFileType(const char* name);	//è·å–content_type
 
-int hexToDec(char c);		//½«×Ö·û×ª»»ÎªÕûĞÎÊı
+int hexToDec(char c);		//å°†å­—ç¬¦è½¬æ¢ä¸ºæ•´å½¢æ•°
 
-void decodeMsg(char* to, char* from);	//½âÂë---- to ´æ´¢½âÂëÖ®ºóµÄÊı¾İ£¬´«³ö²ÎÊı£¬ from ´æ´¢±»½âÂëµÄÊı¾İ£¬´«Èë²ÎÊı
+void decodeMsg(char* to, char* from);	//è§£ç ---- to å­˜å‚¨è§£ç ä¹‹åçš„æ•°æ®ï¼Œä¼ å‡ºå‚æ•°ï¼Œ from å­˜å‚¨è¢«è§£ç çš„æ•°æ®ï¼Œä¼ å…¥å‚æ•°

@@ -2,24 +2,24 @@
 
 /*
  * ======================================================
- * HTTP ÏìÓ¦Í·¸ñÊ½
+ * HTTP å“åº”å¤´æ ¼å¼
  * ======================================================
  *
- * ×´Ì¬ĞĞ: HTTP-Version Status-Code Reason-Phrase\r\n
- * Ê¾Àı: HTTP/1.1 200 OK\r\n
+ * çŠ¶æ€è¡Œ: HTTP-Version Status-Code Reason-Phrase\r\n
+ * ç¤ºä¾‹: HTTP/1.1 200 OK\r\n
  *
- * ±ØÑ¡Í·:
- * - Content-Length: ×Ö½ÚÊı\r\n  (³ı·ÇÊÇ·Ö¿é´«Êä)
- * - Content-Type: MIMEÀàĞÍ\r\n
+ * å¿…é€‰å¤´:
+ * - Content-Length: å­—èŠ‚æ•°\r\n  (é™¤éæ˜¯åˆ†å—ä¼ è¾“)
+ * - Content-Type: MIMEç±»å‹\r\n
  *
- * ¿ÉÑ¡Í·:
- * - Server: ·şÎñÆ÷ĞÅÏ¢\r\n
- * - Date: ÏìÓ¦Ê±¼ä (RFC 1123 ¸ñÊ½)\r\n
+ * å¯é€‰å¤´:
+ * - Server: æœåŠ¡å™¨ä¿¡æ¯\r\n
+ * - Date: å“åº”æ—¶é—´ (RFC 1123 æ ¼å¼)\r\n
  * - Connection: keep-alive/close\r\n
  *
- * ½áÊø±êÖ¾: \r\n\r\n
+ * ç»“æŸæ ‡å¿—: \r\n\r\n
  *
- * Ê¾ÀıÏìÓ¦:
+ * ç¤ºä¾‹å“åº”:
  * --------------------------------------
  * HTTP/1.1 404 Not Found\r\n
  * Content-Type: text/plain\r\n
@@ -28,10 +28,10 @@
  * Not Found
  */
 
-int sendFile(const char* filename, int cfd);	//·¢ËÍÎÄ¼ş
+int sendFile(const char* filename, int cfd);	//å‘é€æ–‡ä»¶
 
-//·¢ËÍÏìÓ¦Í·£¨×´Ì¬ĞĞ+ÏìÓ¦Í·£©
-//ÎÄ¼şÃèÊö·û+×´Ì¬Âë+×´Ì¬ÃèÊö+content_type+contene_length
+//å‘é€å“åº”å¤´ï¼ˆçŠ¶æ€è¡Œ+å“åº”å¤´ï¼‰
+//æ–‡ä»¶æè¿°ç¬¦+çŠ¶æ€ç +çŠ¶æ€æè¿°+content_type+contene_length
 int sendHeadMsg(int cfd, int status, const char* descr, const char* type, int length);
 
 int sendDir(const char* dirName, int cfd);

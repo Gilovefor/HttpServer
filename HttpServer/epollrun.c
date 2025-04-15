@@ -5,13 +5,13 @@
 #include <stdio.h>
 
 int epollRun(int lfd) {
-	//1¡¢´´½¨epollÊµÀı£¨´´½¨epollºìºÚÊ÷µÄ¸ù½Úµã£©
+	//1ã€åˆ›å»ºepollå®ä¾‹ï¼ˆåˆ›å»ºepollçº¢é»‘æ ‘çš„æ ¹èŠ‚ç‚¹ï¼‰
 	int epfd = epoll_create(1);
 	if (epfd == -1) {
 		perror("epoll_create");
 		return -1;
 	}
-	//2¡¢lfdÌí¼Óµ½epollÊ÷ÉÏ
+	//2ã€lfdæ·»åŠ åˆ°epollæ ‘ä¸Š
 	struct epoll_event ev;
 	ev.data.fd = lfd;
 	ev.events = EPOLLIN;
@@ -20,7 +20,7 @@ int epollRun(int lfd) {
 		perror("epoll_ctl");
 		return -1;
 	}
-	//3¡¢³ÖĞø¼ì²â
+	//3ã€æŒç»­æ£€æµ‹
 	struct epoll_event evs[1024];
 	int size = sizeof(evs) / sizeof(struct epoll_event);
 
@@ -33,12 +33,12 @@ int epollRun(int lfd) {
 			}
 			int fd = evs[i].data.fd;
 			if (fd == lfd) {
-				//Èç¹ûÊÇ¼àÌıµÄÎÄ¼şÃèÊö·û£¬½¨Á¢ĞÂÁ¬½Ó
+				//å¦‚æœæ˜¯ç›‘å¬çš„æ–‡ä»¶æè¿°ç¬¦ï¼Œå»ºç«‹æ–°è¿æ¥
 				acceptClient(lfd, epfd);
 
 			}
 			else {
-				//·ñÔòÎªÍ¨ĞÅµÄÎÄ¼şÃèÊö·û£¬¸ºÔğ½ÓÊÜ¶Ô¶ËµÄÊı¾İ£¨http¸ñÊ½£©
+				//å¦åˆ™ä¸ºé€šä¿¡çš„æ–‡ä»¶æè¿°ç¬¦ï¼Œè´Ÿè´£æ¥å—å¯¹ç«¯çš„æ•°æ®ï¼ˆhttpæ ¼å¼ï¼‰
 				recvHttpRequest(fd, epfd);
 			}
 		}
