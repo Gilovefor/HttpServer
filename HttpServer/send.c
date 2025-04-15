@@ -7,38 +7,41 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <string.h>
 
 int sendFile(const char* filename, int cfd)
 {
-	//1¡¢´ò¿ªÎÄ¼ş
+	//1ã€æ‰“å¼€æ–‡ä»¶
 	int fd = open(filename, O_RDONLY);
 	assert(fd > 0);
 
-#if 0		//Ê¹ÓÃÆÕÍ¨µÄsendº¯Êı
+#if 0		//ä½¿ç”¨æ™®é€šçš„sendå‡½æ•°
 	while (1) {
-		char buf[1024];		//Ã¿´Î´ÓÎÄ¼şÖĞ¶ÁÈ¡1kµÄÊı¾İ£¨ÔÚ·şÎñÆ÷¶Ë²ÉÓÃµÄÊÇÁ÷Ê½´«ÊäĞ­Òé£¬·şÎñÆ÷Ã¿´Î¶ÁÍê1k»á¼ÌĞø¶ÁÈ¡£¬Ö±µ½½áÊø£©
+		char buf[1024];		//æ¯æ¬¡ä»æ–‡ä»¶ä¸­è¯»å–1kçš„æ•°æ®ï¼ˆåœ¨æœåŠ¡å™¨ç«¯é‡‡ç”¨çš„æ˜¯æµå¼ä¼ è¾“åè®®ï¼ŒæœåŠ¡å™¨æ¯æ¬¡è¯»å®Œ1kä¼šç»§ç»­è¯»å–ï¼Œç›´åˆ°ç»“æŸï¼‰
 		int len = read(fd, buf, sizeof buf);
 		if (len > 0) {
 			send(cfd, buf, len, 0);
-			usleep(10);		//ĞİÏ¢10ms£¬ÈÃ¿Í»§¶Ë´¦ÀíĞÅÏ¢
+			usleep(10);		//ä¼‘æ¯10msï¼Œè®©å®¢æˆ·ç«¯å¤„ç†ä¿¡æ¯
 		}
 		else if (len == 0) {
-			break;		//ÏûÏ¢·¢ËÍÍê³ÉÌø³öÑ­»·
+			break;		//æ¶ˆæ¯å‘é€å®Œæˆè·³å‡ºå¾ªç¯
 		}
 		else {
 			perror("read");
 			break;
 		}
 	}
-#elif 1		//Ê¹ÓÃsendfile+lseek
+#elif 1		//ä½¿ç”¨sendfile+lseek
 	off_t offset = 0;
-	off_t size = lseek(fd, 0,SEEK_END);	//»ñÈ¡ÎÄ¼ş´óĞ¡	
+	off_t size = lseek(fd, 0,SEEK_END);	//è·å–æ–‡ä»¶å¤§å°	
 	if (size == -1) {
 		perror("lseek(SEEK_END) failed");
 		return -1;
 	}
 	
-	if (lseek(fd, 0, SEEK_SET)==-1) {	//ÖØÖÃÖ¸Õëµ½ÎÄ¼şÍ·
+	if (lseek(fd, 0, SEEK_SET)==-1) {	//é‡ç½®æŒ‡é’ˆåˆ°æ–‡ä»¶å¤´
 		perror("lseek(SEEK_SET) failed");
 		return -1;
 	}
@@ -53,8 +56,8 @@ int sendFile(const char* filename, int cfd)
 		}
 	}
 
-#elif 0		//Ê¹ÓÃ struct stat
-	// 1. »ñÈ¡ÎÄ¼ş´óĞ¡£¨²»ÒÆ¶¯Ö¸Õë£©
+#elif 0		//ä½¿ç”¨ struct stat
+	// 1. è·å–æ–‡ä»¶å¤§å°ï¼ˆä¸ç§»åŠ¨æŒ‡é’ˆï¼‰
 	struct stat file_stat;
 	if (fstat(fd, &file_stat) == -1) {
 		perror("fstat failed");
@@ -62,13 +65,13 @@ int sendFile(const char* filename, int cfd)
 	}
 	off_t file_size = file_stat.st_size;
 
-	// 2.Ê¼ÖÕÖØÖÃÎÄ¼şÖ¸ÕëÎ»ÖÃ£¬±ÜÃâ³öÏÖÎÊÌâ
+	// 2.å§‹ç»ˆé‡ç½®æ–‡ä»¶æŒ‡é’ˆä½ç½®ï¼Œé¿å…å‡ºç°é—®é¢˜
 	if (lseek(fd, 0, SEEK_SET) == -1) {		
 		perror("lseek failed");
 		return -1;
 	}
 
-	// 3. ·¢ËÍÎÄ¼ş
+	// 3. å‘é€æ–‡ä»¶
 	ssize_t sent = sendfile(cfd, fd, NULL, file_size);
 	if (sent == -1) {
 		perror("sendfile failed");
@@ -84,23 +87,23 @@ int sendHeadMsg(int cfd, int status, const char* descr, const char* type, int le
 {
 	char buf[4096] = { 0 };
 
-	// ×´Ì¬ĞĞ
+	// çŠ¶æ€è¡Œ
 	sprintf(buf, "HTTP/1.1 %d %s\r\n", status, descr);
 
-	// ÕıÈ·Æ´Ğ´µÄÏìÓ¦Í·
+	// æ­£ç¡®æ‹¼å†™çš„å“åº”å¤´
 	sprintf(buf + strlen(buf), "Content-Type: %s\r\n", type);
 
-	// Ö»ÓĞµ± length >= 0 Ê±²Å·¢ËÍ Content-Length
+	// åªæœ‰å½“ length >= 0 æ—¶æ‰å‘é€ Content-Length
 	if (length >= 0) {
 		sprintf(buf + strlen(buf), "Content-Length: %d\r\n", length);
 	}
 
 	strcat(buf, "Connection: close\r\n");
 		
-	// ¿ÕĞĞ£¬±íÊ¾Í·²¿½áÊø
+	// ç©ºè¡Œï¼Œè¡¨ç¤ºå¤´éƒ¨ç»“æŸ
 	strcat(buf, "\r\n");
 
-	// ·¢ËÍÍ·²¿
+	// å‘é€å¤´éƒ¨
 	send(cfd, buf, strlen(buf), 0);
 	return 0;
 }
@@ -129,7 +132,7 @@ int sendHeadMsg(int cfd, int status, const char* descr, const char* type, int le
 */
 int sendDir(const char* dirName, int cfd)
 {
-	char buf[8192] = { 0 };  // ×ã¹»´óµØ»º´æÄ¿Â¼ÄÚÈİ
+	char buf[8192] = { 0 };  // è¶³å¤Ÿå¤§åœ°ç¼“å­˜ç›®å½•å†…å®¹
 	char temp[1024] = { 0 };
 
 	sprintf(buf, "<html><head><title>%s</title></head><body><table>", dirName);
@@ -177,11 +180,11 @@ int sendDir(const char* dirName, int cfd)
 	strcat(buf, temp);
 	free(namelist);
 
-	printf("send file right now......£º\n%s\n", buf);
-	// ·¢ËÍÏìÓ¦Í·£¨³¤¶È±ØĞëÊÇÊµ¼ÊÒ³Ãæ³¤¶È£©
+	printf("send file right now......ï¼š\n%s\n", buf);
+	// å‘é€å“åº”å¤´ï¼ˆé•¿åº¦å¿…é¡»æ˜¯å®é™…é¡µé¢é•¿åº¦ï¼‰
 	sendHeadMsg(cfd, 200, "OK", "text/html", strlen(buf));
 
-	// ·¢ËÍ HTML ÕıÎÄ
+	// å‘é€ HTML æ­£æ–‡
 	send(cfd, buf, strlen(buf), 0);
 
 	return 0;
